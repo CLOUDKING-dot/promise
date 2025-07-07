@@ -120,26 +120,50 @@ const initiativesModalImg = document.querySelector(".initiatives-modal [data-mod
 const initiativesModalFunc = function () {
   initiativesModalContainer.classList.toggle("active");
   initiativesOverlay.classList.toggle("active");
+  document.body.classList.toggle("modal-open"); // Prevent body scroll
 }
 
-// add click event to all project item icons
+// add click and touchstart events to all project item icons
 for (let i = 0; i < projectItems.length; i++) {
-  projectItems[i].addEventListener("click", function (e) {
-    e.preventDefault(); // Prevent default anchor behavior
-    const projectItem = this.closest("[data-filter-item]");
-    const imgSrc = projectItem.dataset.modalImgSrc;
-    const imgAlt = projectItem.dataset.modalImgAlt;
-    console.log("Opening modal for image:", imgSrc); // Debugging log
-    if (imgSrc && initiativesModalImg) {
-      initiativesModalImg.src = imgSrc;
-      initiativesModalImg.alt = imgAlt || "Initiative Image";
-    } else {
-      console.error("Image source not found or modal image element missing:", { imgSrc, initiativesModalImg });
-    }
-    initiativesModalFunc();
+  ['click', 'touchstart'].forEach(eventType => {
+    projectItems[i].addEventListener(eventType, function (e) {
+      e.preventDefault(); // Prevent default anchor behavior
+      const projectItem = this.closest("[data-filter-item]");
+      const imgSrc = projectItem.dataset.modalImgSrc;
+      const imgAlt = projectItem.dataset.modalImgAlt;
+      console.log("Opening modal for image:", imgSrc); // Debugging log
+      if (imgSrc && initiativesModalImg) {
+        initiativesModalImg.src = imgSrc;
+        initiativesModalImg.alt = imgAlt || "Initiative Image";
+        // Handle image load error
+        initiativesModalImg.onerror = () => {
+          console.error("Failed to load image:", imgSrc);
+          initiativesModalImg.src = './assets/images/fallback.jpg'; // Fallback image
+          initiativesModalImg.alt = "Image not available";
+        };
+      } else {
+        console.error("Image source not found or modal image element missing:", { imgSrc, initiativesModalImg });
+      }
+      initiativesModalFunc();
+    });
   });
 }
 
-// add click event to initiatives modal close button and overlay
-initiativesModalCloseBtn.addEventListener("click", initiativesModalFunc);
-initiativesOverlay.addEventListener("click", initiativesModalFunc);
+// add click and touchstart events to initiatives modal close button and overlay
+['click', 'touchstart'].forEach(eventType => {
+  initiativesModalCloseBtn.addEventListener(eventType, initiativesModalFunc);
+  initiativesOverlay.addEventListener(eventType, initiativesModalFunc);
+});
+
+// Swipe-to-close for mobile
+let touchStartY = 0;
+initiativesModalContainer.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+});
+
+initiativesModalContainer.addEventListener('touchmove', (e) => {
+  const touchEndY = e.touches[0].clientY;
+  if (touchEndY - touchStartY > 150) { // Swipe down threshold
+    initiativesModalFunc();
+  }
+});

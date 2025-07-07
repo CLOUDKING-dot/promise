@@ -1530,3 +1530,38 @@ main {
 
   .timeline-text { max-width: 700px; }
 }
+
+/* Append to existing style.css */
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Enhance mobile usability for initiatives modal */
+@media (max-width: 580px) {
+  .initiatives-modal {
+    margin: 5px; /* Reduce margin for smaller screens */
+    padding: 8px;
+  }
+
+  .modal-close-btn {
+    width: 36px; /* Larger tap area for mobile */
+    height: 36px;
+    font-size: 20px;
+    padding: 8px;
+  }
+
+  .modal-img-box {
+    max-height: 85vh; /* Slightly more height for smaller screens */
+  }
+
+  .project-item-icon-box {
+    padding: 20px; /* Larger tap area for eye icon */
+  }
+}
+
+/* Ensure modal image loads efficiently */
+.modal-img-box img[data-modal-img] {
+  loading: lazy;
+}
