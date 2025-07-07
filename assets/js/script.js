@@ -108,3 +108,38 @@ for (let i = 0; i < navigationLinks.length; i++) {
     }
   });
 }
+
+// initiatives modal variables
+const projectItems = document.querySelectorAll("[data-project-img-modal]");
+const initiativesModalContainer = document.querySelector("[data-initiatives-modal-container]");
+const initiativesModalCloseBtn = document.querySelector("[data-initiatives-modal-close-btn]");
+const initiativesOverlay = document.querySelector("[data-initiatives-overlay]");
+const initiativesModalImg = document.querySelector(".initiatives-modal [data-modal-img]");
+
+// initiatives modal toggle function
+const initiativesModalFunc = function () {
+  initiativesModalContainer.classList.toggle("active");
+  initiativesOverlay.classList.toggle("active");
+}
+
+// add click event to all project item icons
+for (let i = 0; i < projectItems.length; i++) {
+  projectItems[i].addEventListener("click", function (e) {
+    e.preventDefault(); // Prevent default anchor behavior
+    const projectItem = this.closest("[data-filter-item]");
+    const imgSrc = projectItem.dataset.modalImgSrc;
+    const imgAlt = projectItem.dataset.modalImgAlt;
+    console.log("Opening modal for image:", imgSrc); // Debugging log
+    if (imgSrc && initiativesModalImg) {
+      initiativesModalImg.src = imgSrc;
+      initiativesModalImg.alt = imgAlt || "Initiative Image";
+    } else {
+      console.error("Image source not found or modal image element missing:", { imgSrc, initiativesModalImg });
+    }
+    initiativesModalFunc();
+  });
+}
+
+// add click event to initiatives modal close button and overlay
+initiativesModalCloseBtn.addEventListener("click", initiativesModalFunc);
+initiativesOverlay.addEventListener("click", initiativesModalFunc);
